@@ -1,0 +1,31 @@
+Staking :- 
+. We have a smart contract in which we stake some amount of tokens for a certain time or lock the tokens.Then we got a reward in terms of other tokens.
+
+Staking Algorithm :- 
+
+    1. Reward Tokens = (amount staked by a user / total staked amount) * reward rate  // This eq works dynamically in the contract
+        Reward Tokens = (amount staked by user) * Reward Rate / total staked amount 
+
+
+    Reward rate :- Rewards give to users at time/sec
+    Rewrad Rate Taken into the formaula :- 10 Tokens/sec
+
+
+-------------------- Example ------------------------------------
+
+                           Time              A(User)                 B(User)
+                          (sec)
+
+Staked Tokens   --------->  0                   1                       1
+
+                --------->  1                   5                       5
+                |
+                |           2                   5                       5
+Reward Tokens ---
+                |           3                   5                       5
+                |
+                --------->  4                   5                       5
+
+Equation :
+
+Reward Tokens = (1 / 2) * reward rate == (reward rate/2) ==  (10/2) == 5 Tokens/second
