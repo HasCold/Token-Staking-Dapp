@@ -9,10 +9,11 @@ import "@openzeppelin/contracts/security/ReentrancyGuard.sol";
 import "@openzeppelin/contracts/utils/math/SafeMath.sol";
 
 contract Staking is ReentrancyGuard {
+    using SafeMath for uint;
     IERC20 public s_stakingToken;  // This is IERC20 data-type becuase we use the interface of IERC20 so we can easily use the functions of this standard
     IERC20 public s_rewardToken;
 
-    uint public constant REWARD_RATE = 10;  // reward rate per sec is 10 tokens
+    uint public constant REWARD_RATE = 1e18;  // reward rate per sec is 10 tokens
     uint private userTotalStakedTokens;
     uint public rewardPerTokenStored;  // Initially Zero 0
     uint public lastUpdateTime;  // To check the user events on last action
@@ -37,16 +38,16 @@ contract Staking is ReentrancyGuard {
         // if someone staked the tokens so how much time will it be staked
         // block.timestamp (or block.blocktimestamp in older versions) represents the current block timestamp. It is a property of the current block and returns the Unix timestamp (the number of seconds that have elapsed since January 1, 1970)  
         //            currentUpdateTime  -    0 (second)
-        uint totalTime = block.timestamp - lastUpdateTime;
-        uint totalRewards = REWARD_RATE * totalTime;  
+        uint totalTime = block.timestamp.sub(lastUpdateTime);
+        uint totalRewards = REWARD_RATE.mul(totalTime);  
         // Reward Tokens = (amount staked by user) * Reward Rate / total staked amount 
-        return  rewardPerTokenStored + totalRewards/userTotalStakedTokens;  // because we also update the previous value of rewardPerTokenStored
+        return  rewardPerTokenStored.add(totalRewards.mul(1e18).div(userTotalStakedTokens));  // because we also update the previous value of rewardPerTokenStored
     }
 
 
     // Amount staked by a user
     function earned(address account) public view returns (uint) {
-        return (stakedBalance[account])*(rewardPerToken() - userRewardPerTokenPaid[account]);
+        return stakedBalance[account].mul(rewardPerToken().sub(userRewardPerTokenPaid[account])).div(1e18).add(rewards[account]);
     }
 
     // Basically it is a check point for lastUpdateTime means store your last seconds when you are withdrawing amount 
@@ -60,18 +61,18 @@ contract Staking is ReentrancyGuard {
 
     function stake(uint amount) external nonReentrant updateReward(msg.sender) {
         require(amount > 0, "Amount must be greater than zero");
-        userTotalStakedTokens += amount;
-        stakedBalance[msg.sender] += amount;
+        userTotalStakedTokens = userTotalStakedTokens.add(amount);
+        stakedBalance[msg.sender] = stakedBalance[msg.sender].add(amount);
         emit Staked(msg.sender, amount);
 
         bool success = s_stakingToken.transferFrom(msg.sender, address(this), amount);
         require(success, "Transfer Failed");
     } 
 
-    function withdraw(uint amount) external nonReentrant updateReward(msg.sender) {
+    function withdrawStakedTokens(uint amount) external nonReentrant updateReward(msg.sender) {
         require(amount > 0, "Amount must be greater than zero");
-        userTotalStakedTokens -= amount;
-        stakedBalance[msg.sender] -= amount;
+        userTotalStakedTokens = userTotalStakedTokens.sub(amount);
+        stakedBalance[msg.sender] = stakedBalance[msg.sender].sub(amount);
         emit Withdrawn(msg.sender, amount);
 
         bool success = s_stakingToken.transfer(msg.sender, amount);
@@ -89,3 +90,9 @@ contract Staking is ReentrancyGuard {
         require(success, "Reward Transfer Failed");
     }
 }
+
+
+// Stake Time - 1719079430
+// Withdrwal Time - 1719079458
+
+// total reward = 28(seconds) * 10(Reward Rate) = 280 reward tokens
