@@ -52,7 +52,6 @@ const Wallet = ({children}) => {
     </Web3Context.Provider>
     
     {loading && <p>Loading...</p>}
-    <div>wallet</div>
     <Button onClick={handleWallet} type={"button"} bool={loading} label={"Connect Wallet"} />
     </>
   )
