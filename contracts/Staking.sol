@@ -13,7 +13,7 @@ contract Staking is ReentrancyGuard {
     IERC20 public s_stakingToken;  // This is IERC20 data-type becuase we use the interface of IERC20 so we can easily use the functions of this standard
     IERC20 public s_rewardToken;
 
-    uint public constant REWARD_RATE = 1e18;  // reward rate per sec is 10 tokens
+    uint public constant REWARD_RATE = 1e18;  // reward rate per sec is 1 tokens
     uint private userTotalStakedTokens;
     uint public rewardPerTokenStored;  // Initially Zero 0
     uint public lastUpdateTime;  // To check the user events on last action

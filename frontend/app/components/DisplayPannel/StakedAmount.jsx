@@ -2,6 +2,7 @@
 
 import React, {useState, useEffect} from 'react'
 import { useWeb3Context } from '../Wallet/Wallet'
+import { ethers } from 'ethers';
 
 const StakedAmount = () => {
 
@@ -11,8 +12,10 @@ const StakedAmount = () => {
 
     const fetchStakedBalance = async () => {
         try {
-            const amountStaked = await stakingContract.stakedBalance(selectedAccount);
-            console.log(amountStaked);
+            const amountStakedWei = await stakingContract.stakedBalance(selectedAccount);
+            const amountStakeEth = ethers.formatUnits(amountStakedWei.toString(), "wei");  // every token works with the 1 ether = 10^18 wei
+            setStakedAmount(amountStakeEth);
+            
         } catch (error) {
             console.error(error.message);
         }
@@ -23,7 +26,7 @@ const StakedAmount = () => {
     }, [stakingContract, selectedAccount]);
 
   return (
-    <div>StakedAmount</div>
+    <div>Staked amount : {stakedAmount}</div>
   )
 }
 
