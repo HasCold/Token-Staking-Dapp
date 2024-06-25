@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import { useWeb3Context } from '../Wallet/Wallet';
 import { ethers } from 'ethers';
+import "./DisplayPanel.css"
 
 const EarnedReward = () => {
 
@@ -34,7 +35,10 @@ const EarnedReward = () => {
   }, [stakingContract, selectedAccount]);
 
   return (
-    <div>EarnedReward : {earnedReward}</div>
+    <div className="earned-reward">
+      <p>Earned Reward:</p>
+      <span>{earnedReward}</span>
+  </div>
   )
 }
 

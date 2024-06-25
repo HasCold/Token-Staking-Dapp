@@ -9,12 +9,12 @@ const ConnectedNetwork = () => {
     const {chainId} = state;
     
     if(chainId === 11155111){   // chainId 11155111 for sepolia testnet
-      return <p>Connected Network : Sepolia</p>
+      return <p className="network">Connected Network : Sepolia</p>
     }else if(!chainId){
-      return <p>Not connected to any network</p>
+      return <p className="network">Not connected to any network</p>
     }
     else{
-      return <p>Connected Network : Unsupported</p>
+      return <p className="network">Connected Network : Unsupported</p>
     }
 
 }

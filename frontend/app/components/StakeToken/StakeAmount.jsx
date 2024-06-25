@@ -5,11 +5,12 @@ import Button from '../Button';
 import { ethers } from 'ethers';
 import { useWeb3Context } from '../Wallet/Wallet';
 import { useStakeContext } from '@/app/context/StakingContext';
+import "./StakeToken.css";
+import toast from 'react-hot-toast';
 
 const StakeAmount = () => {
 
     const stakeAmountRef = useRef();
-    const [transactionStatus, setTransactionStatus] = useState("");
 
     const {state} = useWeb3Context();
     const {stakingContract} = state;
@@ -30,31 +31,39 @@ const StakeAmount = () => {
         // Approval of using amount given to the staking smart contract 
         try {
             const transaction = await stakingContract.stake(amountToStake);
-            setTransactionStatus("Transaction is in pending");
             // const ObjTransac = await provider.getTransaction(transaction.hash);  // Returns the transaction that this log occurred in.
+            await toast.promise(transaction.wait(), {
+                loading: "Transaction is pending...",
+                success: () => {
+                    setIsReload(!isReload);
+                  return 'Transaction successful 👌'
+                },
+                error: 'Transaction failed 🤯'
+            })
+            stakeAmountRef.current.value = "";
 
-            const receipt = await transaction.wait();  // confirmation from the node that the block is successfully mined.
-            if(receipt.status === 1){
-                setTransactionStatus("Transaction is successful");
-                setIsReload(!isReload);
-                setTimeout(() => {
-                    setTransactionStatus("");
-                }, 5000);   // 5000ms -> 5 seconds
-                stakeAmountRef.current.value = "";
-            }else{
-                setTransactionStatus("Staking Failed !");
-            }
+            // const receipt = await transaction.wait();  // confirmation from the node that the block is successfully mined.
+            // if(receipt.status === 1){
+            //     setTransactionStatus("Transaction is successful");
+            //     setIsReload(!isReload);
+            //     setTimeout(() => {
+            //         setTransactionStatus("");
+            //     }, 5000);   // 5000ms -> 5 seconds
+            //     stakeAmountRef.current.value = "";
+            // }else{
+            //     setTransactionStatus("Staking Failed !");
+            // }
 
         } catch (error) {
+            toast.error("Staking Failed");
             console.error(error.message);    
         }
     }
 
     return (
         <div>
-            {transactionStatus && <p>{transactionStatus}</p>}
-            <form onSubmit={stakeToken}>
-                <label htmlFor='stakeToken'>Token Stake</label>
+            <form onSubmit={stakeToken}  className="stake-amount-form">
+                <label  className="stake-input-label" htmlFor='stakeToken'>Enter Staked Amount:</label>
                 <input ref={stakeAmountRef} type="text" id='stakeToken'/>
                 <Button type={"submit"} label={"Stake Token"}/>
             </form>

@@ -4,14 +4,14 @@ import React, { useRef, useState } from 'react'
 import Button from '../Button';
 import { ethers } from 'ethers';
 import { useWeb3Context } from '../Wallet/Wallet';
+import toast from 'react-hot-toast';
 
 const TokenApproval = () => {
 
     const approvedTokenRef = useRef();
-    const [transactionStatus, setTransactionStatus] = useState("");
-
+    
     const {state} = useWeb3Context();
-    const {stakingContract, stakeTokenContract, selectedAccount} = state;
+    const {stakingContract, stakeTokenContract} = state;
 
     const approveToken = async (e) => {
         e.preventDefault();
@@ -28,21 +28,27 @@ const TokenApproval = () => {
         // Approval of using amount given to the staking smart contract 
         try {
             const transaction = await stakeTokenContract.approve(stakingContract.target, amountToSend);
-            setTransactionStatus("Transaction is in pending");
-            // const ObjTransac = await provider.getTransaction(transaction.hash);  // Returns the transaction that this log occurred in.
+            await toast.promise(transaction.wait(),
+            {
+              loading: "Transaction is pending...",
+              success: 'Transaction successful 👌',
+              error: 'Transaction failed 🤯'
+            });
+            approvedTokenRef.current.value = "";
 
-            const receipt = await transaction.wait();  // confirmation from the node that the block is successfully mined.
-            if(receipt.status === 1){
-                setTransactionStatus("Transaction is successful");
-                setTimeout(() => {
-                    setTransactionStatus("");
-                }, 5000);   // 5000ms -> 5 seconds
-                approvedTokenRef.current.value = "";
-            }else{
-                setTransactionStatus("Transaction Failed !");
-            }
+            // const receipt = await transaction.wait();  // confirmation from the node that the block is successfully mined.
+            // if(receipt.status === 1){
+            //     setTransactionStatus("Transaction is successful");
+            //     setTimeout(() => {
+            //         setTransactionStatus("");
+            //     }, 5000);   // 5000ms -> 5 seconds
+            //     approvedTokenRef.current.value = "";
+            // }else{
+            //     setTransactionStatus("Transaction Failed !");
+            // }
 
         } catch (error) {
+            toast.error("Token Approval Failed");
             console.error(error.message);    
         }
 
@@ -50,11 +56,10 @@ const TokenApproval = () => {
 
   return (
     <div>
-        {transactionStatus && <p>{transactionStatus}</p>}
-        <form onSubmit={approveToken}>
-            <label htmlFor='approveToken'>Token Approval</label>
+        <form onSubmit={approveToken}  className="token-amount-form">
+            <label htmlFor='approveToken'  className="token-input-label">Token Approval :</label>
             <input ref={approvedTokenRef} type="text" id='approveToken'/>
-            <Button type={"submit"} label={"Approve"}/>
+            <Button type={"submit"} label={"Token Approval"}/>
         </form>
     </div>
   )

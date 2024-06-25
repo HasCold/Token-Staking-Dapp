@@ -3,6 +3,7 @@
 import React, {useState, useEffect} from 'react'
 import { useWeb3Context } from '../Wallet/Wallet'
 import { ethers } from 'ethers';
+import "./DisplayPanel.css"
 
 const RewardRate = () => {
 
@@ -26,10 +27,10 @@ const RewardRate = () => {
     }, [stakingContract, selectedAccount]);
 
   return (
-    <div>
-      <p style={{display:"inline-block"}}>Reward Rate : {" "}</p>
+    <div className="reward-rate">
+      <p>Reward Rate:</p>
       <span>{rewardRate} token/sec </span>
-       </div>
+  </div>
   )
 }
 

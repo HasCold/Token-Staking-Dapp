@@ -8,9 +8,11 @@ const ConnectedAccount = () => {
     const {state} = useWeb3Context();
     const {selectedAccount} = state;
   return (
-    <div>
-        <p>Connnected Account: {selectedAccount}</p>
-    </div>
+      <div>
+        <p className="connected-ac">
+          {selectedAccount ? selectedAccount : "Connect Account"}
+        </p>
+      </div>
   )
 }
 

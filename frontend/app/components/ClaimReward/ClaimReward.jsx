@@ -3,10 +3,10 @@
 import React, { useState } from 'react'
 import Button from '../Button';
 import { useWeb3Context } from '../Wallet/Wallet';
+import "./ClaimReward.css";
+import toast from 'react-hot-toast';
 
 const ClaimStakeTokens = () => {
-
-    const [transactionStatus, setTransactionStatus] = useState("");
 
     const {state} = useWeb3Context();
     const {stakingContract} = state;
@@ -17,18 +17,21 @@ const ClaimStakeTokens = () => {
 
         try {
             const transaction = await stakingContract.getReward();
-            setTransactionStatus("Transaction is in pending");
-            // const ObjTransac = await provider.getTransaction(transaction.hash);  // Returns the transaction that this log occurred in.
+            await toast.promise(transaction.wait(), {
+                loading: "Transaction is pending",
+                success: 'Transaction successful 👌',  
+                error: 'Transaction failed 🤯'
+            });  // confirmation from the node that the block is successfully mined.
 
-            const receipt = await transaction.wait();  // confirmation from the node that the block is successfully mined.
-            if(receipt.status === 1){
-                setTransactionStatus("Transaction is successful");
-                setTimeout(() => {
-                    setTransactionStatus("");
-                }, 5000);   // 5000ms -> 5 seconds
-            }else{
-                setTransactionStatus("Claimed Reward Failed !");
-            }
+            // const receipt = await transaction.wait();  // confirmation from the node that the block is successfully mined.
+            // if(receipt.status === 1){
+            //     setTransactionStatus("Transaction is successful");
+            //     setTimeout(() => {
+            //         setTransactionStatus("");
+            //     }, 5000);   // 5000ms -> 5 seconds
+            // }else{
+            //     setTransactionStatus("Claimed Reward Failed !");
+            // }
 
         } catch (error) {
             console.error("Claim Reward Failed", error.message);    
@@ -36,8 +39,8 @@ const ClaimStakeTokens = () => {
     }
 
     return (
-        <div>
-            {transactionStatus && <p>{transactionStatus}</p>}
+        <div className='claim-reward'>
+            {/* {transactionStatus && <p>{transactionStatus}</p>} */}
                 <Button type={"submit"} onClick={claimReward} label={"Claim Reward "}/>
         </div>
       )

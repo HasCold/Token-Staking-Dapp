@@ -6,6 +6,8 @@ import React, {useState, useContext, useEffect} from 'react'
 import Button from '../Button';
 import { handleAccountChange } from '@/app/utils/handleAccountChange';
 import { handleChainChange } from '@/app/utils/handleChainChange';
+import "./Wallet.css";
+import toast from 'react-hot-toast';
 
 // Refer How to use the MetaMask Wallet extension :- https://docs.metamask.io/wallet/reference/provider-api/ 
  
@@ -28,6 +30,7 @@ const Wallet = ({children}) => {
             setState({provider, selectedAccount, stakingContract, stakeTokenContract, chainId});
 
         } catch (error) {
+            toast.error("Error connecting wallet")
             console.error("Error in connecting wallet :- ", error.message);
         }finally{
             setLoading(false);
@@ -45,14 +48,14 @@ const Wallet = ({children}) => {
     }, []);
 
   return (
-    <>
+    <div className="Connect-Wallet">
     <Web3Context.Provider value={{state}} >
         {children}
     </Web3Context.Provider>
     
     {loading && <p>Loading...</p>}
     <Button onClick={handleWallet} type={"button"} bool={loading} label={"Connect Wallet"} />
-    </>
+    </div>
   )
 }
 
