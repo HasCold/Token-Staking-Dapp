@@ -1,0 +1,41 @@
+return stakedBalance[account].mul(rewardPerToken().sub(userRewardPerTokenPaid[account])).div(1e18).add(rewards[account]);
+
+Context
+This line is part of the earned function, which calculates the total rewards earned by a user up to the current moment. The earned function returns the reward tokens that an account has earned based on their staked tokens and the reward rate.
+
+Components
+1. stakedBalance[account] :- This is the amount of tokens that the account has staked. It's fetched from the stakedBalance mapping.
+
+
+2. rewardPerToken().sub(userRewardPerTokenPaid[account]) :-
+
+. rewardPerToken(): This function calculates the reward per token based on the time passed and the reward rate.
+
+. userRewardPerTokenPaid[account]: This value represents the last recorded reward per token value for the user when they last interacted with the contract (like staking, withdrawing, or claiming rewards).
+
+. rewardPerToken().sub(userRewardPerTokenPaid[account]): This calculates the difference in the reward per token value since the last time the user interacted with the contract. This difference represents the new rewards earned per token since the last interaction.
+.mul(rewardPerToken().sub(userRewardPerTokenPaid[account]))
+
+
+3. Multiplies the difference in reward per token by the number of tokens staked by the account. This gives the total new rewards earned by the user's staked tokens since the last interaction.
+.div(1e18)
+
+. Divides the result by 1e18 to account for the decimal places. In Ethereum, token calculations often use 18 decimal places for precision. This operation scales the rewards back down to the correct value.
+
+
+4. add(rewards[account]) :-
+
+. Adds any previously accumulated rewards stored in the rewards mapping for the account. This ensures that the total rewards include both the newly earned rewards and the rewards that have been accumulating.
+
+
+------------------------------ Putting It All Together -------------------------------
+The function returns the total earned rewards for a given account by performing the following steps:
+
+Calculate the new rewards earned since the last interaction:
+
+1. Find the difference in reward per token since the last time the user interacted with the contract.
+2. Multiply this difference by the number of tokens the user has staked.
+3. Adjust for the decimal precision by dividing by 1e18.
+4. Add any previously accumulated rewards:
+
+Sum the newly calculated rewards with any rewards that have been previously stored for the user.

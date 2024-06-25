@@ -71,6 +71,8 @@ contract Staking is ReentrancyGuard {
 
     function withdrawStakedTokens(uint amount) external nonReentrant updateReward(msg.sender) {
         require(amount > 0, "Amount must be greater than zero");
+        require(stakedBalance[msg.sender] >= amount, "Staked amount not enough");
+
         userTotalStakedTokens = userTotalStakedTokens.sub(amount);
         stakedBalance[msg.sender] = stakedBalance[msg.sender].sub(amount);
         emit Withdrawn(msg.sender, amount);

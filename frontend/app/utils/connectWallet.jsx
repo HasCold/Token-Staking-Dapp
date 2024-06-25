@@ -30,7 +30,7 @@ const connectWallet = async () => {
             throw new Error("No ethereum accounts available");
         }
 
-        const stakingContractAddress = "0x104ec541c657cdec8903b0ae071a05c421cedbfa";
+        const stakingContractAddress = "0x1066d559A279B3674567D20801442733C56BEACa";
         const stakeTokenContractAddress = "0xb413083d512bcfcebeae6a1a17643318ee02f70f";
 
         stakingContract = new ethers.Contract(stakingContractAddress, StakingABI, signer);  // Instance of a contract

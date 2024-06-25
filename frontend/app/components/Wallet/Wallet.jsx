@@ -16,9 +16,8 @@ const Wallet = ({children}) => {
         selectedAccount: null,
         stakingContract: null,
         stakeTokenContract: null,
-        chainId: null
+        chainId: null,
     });
-    
     const [loading, setLoading] = useState(false);
 
     const handleWallet = async () => {
